@@ -1,9 +1,7 @@
-import os
 import soundboardconstants
 import logging
 import threading
 import sounddevice
-import time
 
 from tkinter import *
 from tkinter import ttk
@@ -20,7 +18,7 @@ from pydub.playback import play
 soundboardRoot = Tk()
 soundboardRoot.geometry("800x400")
 soundboardRoot.title("Soundboard")
-soundboardRoot.iconbitmap(resource_path("./musiknoten-symbol.ico"))
+soundboardRoot.iconbitmap(resource_path("musiknoten-symbol.ico"))
 
 for i in range(3):
     soundboardRoot.columnconfigure(i, weight=1)
@@ -125,3 +123,5 @@ if __name__ == '__main__':
     soundboardRoot.protocol("WM_DELETE_WINDOW", doshutdown)
     soundboardRoot.mainloop()
     logging.info("Main    : all done")
+
+
