@@ -1,5 +1,6 @@
 sounds/
 output/
 .idea/
+__pycache__/
 
 musiknoten-symbol.png
