@@ -1,23 +1,33 @@
 import xml.etree.ElementTree as ET
+
 import soundboardconstants
-import logging
+
 
 class Languages:
-    #__loggingPrefix = "Languages    :"
+    # __loggingPrefix = "Languages    :"
     __languageTree = ""
     __languageRoot = ""
 
     def setlanguagetree(self, file):
-        self.__languageTree = ET.parse(file)
-        #if soundboardconstants.LOGGING:
+        try:
+            self.__languageTree = ET.parse(file)
+        except FileNotFoundError:
+            if soundboardconstants.LOGGING:
+                self.__languageTree = None
+                print("Failed")
+        # if soundboardconstants.LOGGING:
         #    logging.info(f"{self.__loggingPrefix} Loading {file} file...")
 
     def getlanguagetree(self):
         return self.__languageTree
 
     def setlanguageroot(self, tree):
-        self.__languageRoot = tree.getroot()
-        #if soundboardconstants.LOGGING:
+        try:
+            self.__languageRoot = tree.getroot()
+        except AttributeError:
+            self.__languageRoot = None
+
+        # if soundboardconstants.LOGGING:
         #    logging.info(f"{self.__loggingPrefix} Setting {self.getlanguageroot()} as root...")
 
     def getlanguageroot(self):
@@ -27,9 +37,12 @@ class Languages:
         self.setlanguagetree(languagefile)
         self.setlanguageroot(self.getlanguagetree())
 
-        #if soundboardconstants.LOGGING:
+        # if soundboardconstants.LOGGING:
         #    languageName = self.getlanguageroot().find("languageName").text
         #    logging.info(f"{self.__loggingPrefix} Loading {languageName}...")
 
-    def getlanguagestr(self, id):
-        return self.getlanguageroot().find(f'.//languageStr[@id="{id}"]').text
+    def getlanguagestr(self, id, default=None):
+        if self.__languageTree is not None:
+            return self.getlanguageroot().find(f'.//languageStr[@id="{id}"]').text
+        else:
+            return default

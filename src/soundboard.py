@@ -5,9 +5,9 @@ import threading
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
+from tkinter import filedialog
 from resource_path import *
-from filehandler import *
-from languageHandler import *
+from languages import *
 
 from pydub import AudioSegment
 from pydub.playback import play
@@ -71,7 +71,8 @@ def doshutdown():
     global runAudioThread
     statusbartext.set("Exiting...")
 
-    if messagebox.askokcancel(languages.getlanguagestr('filemenuExit'), languages.getlanguagestr('quitDialogQuestion')):
+    if messagebox.askokcancel(languages.getlanguagestr('filemenuExit', 'Quit'),
+                              languages.getlanguagestr('quitDialogQuestion', 'Do you really want to quit?')):
         runAudioThread = False
         soundboardRoot.destroy()
 
@@ -81,14 +82,33 @@ def doshutdown():
 """
     Soundboard Menubar
 """
+
+
+def onopen():
+    print(filedialog.askopenfilename(initialdir=os.getcwd(),
+                                     title=languages.getlanguagestr('filemenuLoadConfiguration', 'Load configuration'),
+                                     filetypes=((languages.getlanguagestr('fileSoundboardConfiguration',
+                                                                          'Soundboard configuration'),
+                                                 "*.sbc;*.sbconf"), (languages.getlanguagestr('fileAllFiles',
+                                                                                              'ALl files'), "*.*"))))
+
+
+def onsave():
+    print(filedialog.asksaveasfilename(initialdir=os.getcwd(),
+                                       title=languages.getlanguagestr('filemenuSaveConfiguration', 'Save configuration'),
+                                       filetypes=(
+                                       (languages.getlanguagestr('fileSoundboardConfiguration'), "*.sbc;*.sbconf", 'Soundboard configuration'),
+                                       (languages.getlanguagestr('fileAllFiles', 'All files'), "*.*"))))
+
+
 menubar = Menu(soundboardRoot)
 
 filemenu = Menu(menubar)
-filemenu.add_command(label=languages.getlanguagestr('filemenuLoadConfiguration'), command=onopen)
-filemenu.add_command(label=languages.getlanguagestr('filemenuSaveConfiguration'), command=onsave)
-filemenu.add_command(label=languages.getlanguagestr('filemenuExit'), command=doshutdown)
+filemenu.add_command(label=languages.getlanguagestr('filemenuLoadConfiguration', 'Load configuration'), command=onopen)
+filemenu.add_command(label=languages.getlanguagestr('filemenuSaveConfiguration', 'Save configuration'), command=onsave)
+filemenu.add_command(label=languages.getlanguagestr('filemenuExit', 'Exit'), command=doshutdown)
 
-menubar.add_cascade(label="Application", menu=filemenu)
+menubar.add_cascade(label=languages.getlanguagestr('filemenuName', 'Application'), menu=filemenu)
 soundboardRoot.config(menu=menubar)
 
 """
@@ -119,9 +139,5 @@ if __name__ == '__main__':
 
     soundboardRoot.protocol("WM_DELETE_WINDOW", doshutdown)
 
-
-
     soundboardRoot.mainloop()
     logging.info(f"{loggingPrefix} all done")
-
-

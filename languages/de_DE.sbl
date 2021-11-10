@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sbl>
     <languageName id="de_DE">Deutsch</languageName>
+    <languageStr id="filemenuName">Anwendung</languageStr>
     <languageStr id="filemenuLoadConfiguration">Konfiguration laden</languageStr>
     <languageStr id="filemenuSaveConfiguration">Konfiguration speichern</languageStr>
     <languageStr id="filemenuExit">Beenden</languageStr>
     <languageStr id="quitDialogQuestion">Möchtest Du wirklich beenden?</languageStr>
+    <languageStr id="fileSoundboardConfiguration">Soundboard Konfiguration</languageStr>
+    <languageStr id="fileAllFiles">Alles</languageStr>
 </sbl>
