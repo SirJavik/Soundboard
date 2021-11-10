@@ -1,16 +1,19 @@
 import soundboardconstants
 import logging
 import threading
-import sounddevice
 
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 from resource_path import *
 from filehandler import *
+from languageHandler import *
 
 from pydub import AudioSegment
 from pydub.playback import play
+
+languages = Languages()
+languages.load("languages/de_DE.sbl")
 
 """
     Soundboard root
@@ -43,31 +46,32 @@ def playaudio():
 
 
 def playaudiothread(name):
+    loggingPrefix = "Thread %s :"
     name = "Audio"
 
     global playAudio, statusbartext
-    logging.info("Thread %s: starting", name)
+    logging.info(f"{loggingPrefix} starting", name)
 
     while runAudioThread:
         sound = AudioSegment.from_file("sounds/sinalco.wav", format="wav")
 
         if playAudio:
-            logging.info("Thread %s: playing audio", name)
+            logging.info(f"{loggingPrefix} playing audio", name)
             statusbartext.set("Playing audio...")
             play(sound)
-            logging.info("Thread %s: sleeping", name)
+            logging.info(f"{loggingPrefix} sleeping", name)
             statusbartext.set(soundboardconstants.STATUSBARDEFAULT)
 
         playAudio = False
 
-    logging.info("Thread %s: finishing", name)
+    logging.info(f"{loggingPrefix} finishing", name)
 
 
 def doshutdown():
     global runAudioThread
     statusbartext.set("Exiting...")
 
-    if messagebox.askokcancel("Quit", "Do you want to quit?"):
+    if messagebox.askokcancel(languages.getlanguagestr('filemenuExit'), languages.getlanguagestr('quitDialogQuestion')):
         runAudioThread = False
         soundboardRoot.destroy()
 
@@ -80,17 +84,11 @@ def doshutdown():
 menubar = Menu(soundboardRoot)
 
 filemenu = Menu(menubar)
-filemenu.add_command(label="Load configuration", command=onopen)
-filemenu.add_command(label="Save configuration", command=onsave)
-filemenu.add_command(label="Exit", command=soundboardRoot.destroy)
-
-devicemenu = Menu(menubar)
-for element in sounddevice.query_devices():
-    if element["max_input_channels"] == 0 & element["hostapi"] == 0:
-        devicemenu.add_radiobutton(label=element["name"])
+filemenu.add_command(label=languages.getlanguagestr('filemenuLoadConfiguration'), command=onopen)
+filemenu.add_command(label=languages.getlanguagestr('filemenuSaveConfiguration'), command=onsave)
+filemenu.add_command(label=languages.getlanguagestr('filemenuExit'), command=doshutdown)
 
 menubar.add_cascade(label="Application", menu=filemenu)
-menubar.add_cascade(label="Device", menu=devicemenu)
 soundboardRoot.config(menu=menubar)
 
 """
@@ -107,21 +105,23 @@ while rowCount != 3:
     rowCount += 1
 
 if __name__ == '__main__':
+    loggingPrefix = "Main         :"
+
     format = "%(asctime)s: %(message)s"
     logging.basicConfig(format=format, level=logging.INFO,
                         datefmt="%H:%M:%S")
 
-    logging.info("Main    : before creating thread")
+    logging.info(f"{loggingPrefix} before creating thread")
     audioThread = threading.Thread(target=playaudiothread, args=(1,))
-    logging.info("Main    : before running thread")
+    logging.info(f"{loggingPrefix} before running thread")
     audioThread.start()
-    logging.info("Main    : wait for the thread to finish")
-
-    print("Found audio devices:")
-    print(sounddevice.query_devices())
+    logging.info(f"{loggingPrefix} wait for the thread to finish")
 
     soundboardRoot.protocol("WM_DELETE_WINDOW", doshutdown)
+
+
+
     soundboardRoot.mainloop()
-    logging.info("Main    : all done")
+    logging.info(f"{loggingPrefix} all done")
 
 
